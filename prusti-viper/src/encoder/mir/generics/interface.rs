@@ -60,10 +60,10 @@ impl<'v, 'tcx: 'v> MirGenericsEncoderInterface<'tcx> for super::super::super::En
     fn encode_param(&self, name: Symbol, index: u32) -> vir_high::ty::TypeVar {
         let sanitized_name = name
             .as_str()
-            .replace(" ", "_")
-            .replace(">", "_gt_")
-            .replace("<", "_lt_")
-            .replace("=", "_eq_");
+            .replace(' ', "_")
+            .replace('>', "_gt_")
+            .replace('<', "_lt_")
+            .replace('=', "_eq_");
         let identifier = format!("{}${}", sanitized_name, index);
         vir_high::ty::TypeVar::generic_type(identifier)
     }

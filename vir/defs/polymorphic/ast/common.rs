@@ -629,8 +629,8 @@ pub struct TypeVar {
 }
 
 impl TypeVar {
-    pub fn is_valid_label(label: &String) -> bool {
-        !label.contains(" ") && !label.contains("<") && !label.contains(">") && !label.contains("=")
+    pub fn is_valid_label(label: &str) -> bool {
+        !label.contains(' ') && !label.contains('<') && !label.contains('>') && !label.contains('=')
     }
 }
 
