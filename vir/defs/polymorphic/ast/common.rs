@@ -426,9 +426,13 @@ impl Type {
                 )
             }
             Type::TypeVar(TypeVar { label }) => {
-                assert!(TypeVar::is_valid_label(label), "Label {} is not valid", label);
+                assert!(
+                    TypeVar::is_valid_label(label),
+                    "Label {} is not valid",
+                    label
+                );
                 format!("__TYPARAM__$_{}$__", label)
-            },
+            }
             x => unreachable!("{}", x),
         }
     }
@@ -626,10 +630,7 @@ pub struct TypeVar {
 
 impl TypeVar {
     pub fn is_valid_label(label: &String) -> bool {
-        !label.contains(" ") &&
-            !label.contains("<") &&
-            !label.contains(">") &&
-            !label.contains("=")
+        !label.contains(" ") && !label.contains("<") && !label.contains(">") && !label.contains("=")
     }
 }
 
