@@ -38,6 +38,8 @@ extern crate rustc_target;
 extern crate tracing;
 extern crate lazy_static;
 
+extern crate rustc_serialize;
+
 pub mod data;
 pub mod environment;
 pub mod specs;

@@ -19,6 +19,7 @@ use std::{collections::HashMap, convert::TryInto, fmt::Debug};
 pub mod checker;
 pub mod external;
 pub mod typed;
+pub mod metadata;
 
 use typed::SpecIdRef;
 
@@ -27,6 +28,11 @@ use crate::specs::{
     typed::{ProcedureSpecification, ProcedureSpecificationKind, SpecGraph, SpecificationItem},
 };
 use prusti_specs::specifications::common::SpecificationId;
+
+use std::fs;
+use std::path::Path;
+use prusti_serialize::metadata::{BinaryMetadata, dump_binary_metadata};
+use crate::specs::metadata::metadata_from_def_spec;
 
 #[derive(Debug)]
 struct ProcedureSpecRefs {
@@ -88,7 +94,18 @@ impl<'a, 'tcx> SpecCollector<'a, 'tcx> {
         self.determine_prusti_assumptions(&mut def_spec);
         // TODO: remove spec functions (make sure none are duplicated or left over)
 
+        self.write_specs_to_file(&def_spec);
+
         def_spec
+    }
+
+    fn write_specs_to_file(&self, def_spec: & typed::DefSpecificationMap) {
+        let metadata = metadata_from_def_spec(def_spec);
+        dump_binary_metadata(
+            self.tcx,
+            Path::new("out.txt"),
+            metadata
+        ).unwrap()
     }
 
     fn determine_procedure_specs(&self, def_spec: &mut typed::DefSpecificationMap) {
