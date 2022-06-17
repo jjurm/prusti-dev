@@ -73,23 +73,23 @@ impl<'tcx> Encoder for MetadataEncoder<'tcx> {
     }
 }
 
-// impl<'a, 'tcx> Encodable<MetadataEncoder<'tcx>> for DefId {
-//     fn encode(&self, s: &mut MetadataEncoder<'tcx>) -> opaque::EncodeResult {
-//         s.tcx.def_path_hash(*self).encode(s)
-//     }
-// }
+impl<'a, 'tcx> Encodable<MetadataEncoder<'tcx>> for DefId {
+    fn encode(&self, s: &mut MetadataEncoder<'tcx>) -> opaque::EncodeResult {
+        s.tcx.def_path_hash(*self).encode(s)
+    }
+}
 
-// impl<'a, 'tcx> Encodable<MetadataEncoder<'tcx>> for DefIndex {
-//     fn encode(&self, _: &mut MetadataEncoder<'tcx>) -> opaque::EncodeResult {
-//         panic!("encoding `DefIndex` without context");
-//     }
-// }
+impl<'a, 'tcx> Encodable<MetadataEncoder<'tcx>> for DefIndex {
+    fn encode(&self, _: &mut MetadataEncoder<'tcx>) -> opaque::EncodeResult {
+        panic!("encoding `DefIndex` without context");
+    }
+}
 
-// impl<'tcx> Encodable<MetadataEncoder<'tcx>> for CrateNum {
-//     fn encode(&self, s: &mut MetadataEncoder<'tcx>) -> opaque::EncodeResult {
-//         s.tcx.stable_crate_id(*self).encode(s)
-//     }
-// }
+impl<'tcx> Encodable<MetadataEncoder<'tcx>> for CrateNum {
+    fn encode(&self, s: &mut MetadataEncoder<'tcx>) -> opaque::EncodeResult {
+        s.tcx.stable_crate_id(*self).encode(s)
+    }
+}
 
 impl<'tcx> TyEncoder<'tcx> for MetadataEncoder<'tcx> {
     // What the fuck does this mean?

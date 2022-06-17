@@ -9,6 +9,7 @@ use std::{
     collections::HashMap,
     fmt::{Debug, Display, Formatter},
 };
+use rustc_macros::TyEncodable;
 
 /// A map of specifications keyed by crate-local DefIds.
 #[derive(Default, Debug, Clone)]
@@ -46,7 +47,7 @@ impl DefSpecificationMap {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, TyEncodable)]
 pub struct ProcedureSpecification {
     pub span: Option<Span>,
     pub kind: SpecificationItem<ProcedureSpecificationKind>,
@@ -71,7 +72,7 @@ impl ProcedureSpecification {
     }
 }
 
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, TyEncodable)]
 pub enum ProcedureSpecificationKind {
     Impure,
     Pure,
@@ -80,7 +81,7 @@ pub enum ProcedureSpecificationKind {
     Predicate(Option<LocalDefId>),
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash, TyEncodable)]
 pub enum SpecConstraintKind {
     ResolveGenericParamTraitBounds,
 }
@@ -130,7 +131,7 @@ pub struct PrustiAssumption {
 /// A contract can be divided into multiple specifications:
 /// - **Base spec**: A spec without constraints.
 /// - **Constrained specs**: Multiple specs which have [SpecConstraintKind] constraints.
-#[derive(Default, Debug, Clone)]
+#[derive(Default, Debug, Clone, TyEncodable)]
 pub struct SpecGraph<T> {
     /// The base specification which has no constraints
     pub base_spec: T,
@@ -317,7 +318,7 @@ impl SpecGraph<ProcedureSpecification> {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, TyEncodable)]
 pub struct Pledge {
     pub reference: Option<()>, // TODO: pledge references
     pub lhs: Option<LocalDefId>,
@@ -326,7 +327,7 @@ pub struct Pledge {
 
 /// A specification, such as preconditions or a `#[pure]` annotation.
 /// Contains information about the refinement of these specifications.
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, TyEncodable)]
 pub enum SpecificationItem<T> {
     /// Represents an empty specification, i.e. when the user has not defined the property
     Empty,

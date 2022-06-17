@@ -39,6 +39,7 @@ extern crate tracing;
 extern crate lazy_static;
 
 extern crate rustc_serialize;
+extern crate rustc_macros;
 
 pub mod data;
 pub mod environment;

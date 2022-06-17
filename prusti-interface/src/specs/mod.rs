@@ -31,8 +31,7 @@ use prusti_specs::specifications::common::SpecificationId;
 
 use std::fs;
 use std::path::Path;
-use prusti_serialize::metadata::{BinaryMetadata, dump_binary_metadata};
-use crate::specs::metadata::metadata_from_def_spec;
+use crate::specs::metadata::{dump_binary_metadata, metadata_from_def_spec};
 
 #[derive(Debug)]
 struct ProcedureSpecRefs {
