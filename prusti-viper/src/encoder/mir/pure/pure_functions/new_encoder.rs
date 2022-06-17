@@ -329,7 +329,7 @@ impl<'p, 'v: 'p, 'tcx: 'v> PureEncoder<'p, 'v, 'tcx> {
             contract.functional_precondition(self.encoder.env(), self.substs)
         {
             let encoded_assertion = self.encoder.encode_assertion_high(
-                &assertion,
+                assertion,
                 None,
                 &parameter_expressions,
                 None,
@@ -357,7 +357,7 @@ impl<'p, 'v: 'p, 'tcx: 'v> PureEncoder<'p, 'v, 'tcx> {
             contract.functional_postcondition(self.encoder.env(), self.substs)
         {
             let encoded_assertion = self.encoder.encode_assertion_high(
-                &assertion,
+                assertion,
                 None,
                 &parameter_expressions,
                 Some(&vir_high::Expression::local_no_pos(encoded_return.clone())),

@@ -142,7 +142,7 @@ impl<'a, 'tcx> SpecCollector<'a, 'tcx> {
                     }
                     SpecIdRef::Predicate(spec_id) => {
                         kind = ProcedureSpecificationKind::Predicate(Some(
-                            *self.spec_functions.get(spec_id).unwrap(),
+                            (*self.spec_functions.get(spec_id).unwrap()).to_def_id(),
                         ));
                     }
                 }
@@ -225,7 +225,9 @@ impl<'a, 'tcx> SpecCollector<'a, 'tcx> {
             def_spec.type_specs.insert(
                 type_id.to_def_id(),
                 typed::TypeSpecification {
-                    invariant: SpecificationItem::Inherent(refs.invariants.clone()),
+                    invariant: SpecificationItem::Inherent(
+                        refs.invariants.clone().into_iter().map(LocalDefId::to_def_id).collect()
+                    ),
                     trusted: SpecificationItem::Inherent(refs.trusted),
                 },
             );

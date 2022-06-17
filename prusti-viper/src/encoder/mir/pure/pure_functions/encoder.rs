@@ -188,7 +188,7 @@ impl<'p, 'v: 'p, 'tcx: 'v> PureFunctionEncoder<'p, 'v, 'tcx> {
 
     pub fn encode_predicate_function(
         &self,
-        predicate_body: &LocalDefId,
+        predicate_body: &DefId,
     ) -> SpannedEncodingResult<vir::Function> {
         let function_name = self.encode_function_name();
         debug!("Encode predicate function {}", function_name);

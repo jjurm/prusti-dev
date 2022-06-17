@@ -51,8 +51,8 @@ impl DefSpecificationMap {
 pub struct ProcedureSpecification {
     pub span: Option<Span>,
     pub kind: SpecificationItem<ProcedureSpecificationKind>,
-    pub pres: SpecificationItem<Vec<LocalDefId>>,
-    pub posts: SpecificationItem<Vec<LocalDefId>>,
+    pub pres: SpecificationItem<Vec<DefId>>,
+    pub posts: SpecificationItem<Vec<DefId>>,
     pub pledges: SpecificationItem<Vec<Pledge>>,
     pub trusted: SpecificationItem<bool>,
 }
@@ -78,7 +78,7 @@ pub enum ProcedureSpecificationKind {
     Pure,
     /// The specification is a predicate with the enclosed body.
     /// The body can be None to account for abstract predicates.
-    Predicate(Option<LocalDefId>),
+    Predicate(Option<DefId>),
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash, TyEncodable)]
@@ -104,7 +104,7 @@ pub struct LoopSpecification {
 /// Specification of a type.
 #[derive(Debug, Clone)]
 pub struct TypeSpecification {
-    pub invariant: SpecificationItem<Vec<LocalDefId>>,
+    pub invariant: SpecificationItem<Vec<DefId>>,
     pub trusted: SpecificationItem<bool>,
 }
 
@@ -230,12 +230,12 @@ impl SpecGraph<ProcedureSpecification> {
     pub fn add_precondition<'tcx>(&mut self, pre: LocalDefId, env: &Environment<'tcx>) {
         match self.get_constraint(pre, env) {
             None => {
-                self.base_spec.pres.push(pre);
+                self.base_spec.pres.push(pre.to_def_id());
                 // Preconditions are explicitly not copied (as opposed to postconditions)
                 // This would always violate behavioral subtyping rules
             }
             Some(constraint) => {
-                self.get_constrained_spec_mut(constraint).pres.push(pre);
+                self.get_constrained_spec_mut(constraint).pres.push(pre.to_def_id());
             }
         }
     }
@@ -247,13 +247,13 @@ impl SpecGraph<ProcedureSpecification> {
     pub fn add_postcondition<'tcx>(&mut self, post: LocalDefId, env: &Environment<'tcx>) {
         match self.get_constraint(post, env) {
             None => {
-                self.base_spec.posts.push(post);
+                self.base_spec.posts.push(post.to_def_id());
                 self.specs_with_constraints
                     .values_mut()
-                    .for_each(|s| s.posts.push(post));
+                    .for_each(|s| s.posts.push(post.to_def_id()));
             }
             Some(obligation) => {
-                self.get_constrained_spec_mut(obligation).posts.push(post);
+                self.get_constrained_spec_mut(obligation).posts.push(post.to_def_id());
             }
         }
     }
@@ -463,7 +463,7 @@ impl SpecificationItem<ProcedureSpecificationKind> {
 
     pub fn get_predicate_body(
         &self,
-    ) -> Result<Option<&LocalDefId>, ProcedureSpecificationKindError> {
+    ) -> Result<Option<&DefId>, ProcedureSpecificationKindError> {
         self.validate()?;
 
         Ok(match self.extract_with_selective_replacement() {
