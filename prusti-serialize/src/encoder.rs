@@ -10,7 +10,7 @@ use rustc_data_structures::fx::{FxHashMap, FxIndexSet};
 use rustc_hir::def_id::{CrateNum, DefId, DefIndex};
 use rustc_middle::ty::TyCtxt;
 
-pub struct MetadataEncoder<'tcx> {
+pub struct DefSpecsEncoder<'tcx> {
     tcx: TyCtxt<'tcx>,
     opaque: opaque::Encoder,
     type_shorthands: FxHashMap<Ty<'tcx>, usize>,
@@ -18,9 +18,9 @@ pub struct MetadataEncoder<'tcx> {
     interpret_allocs: FxIndexSet<AllocId>,
 }
 
-impl<'tcx> MetadataEncoder<'tcx> {
+impl<'tcx> DefSpecsEncoder<'tcx> {
     pub fn new(tcx: TyCtxt<'tcx>) -> Self {
-        MetadataEncoder {
+        DefSpecsEncoder {
             tcx,
             opaque: opaque::Encoder::new(vec![]),
             type_shorthands: Default::default(),
@@ -41,7 +41,7 @@ macro_rules! encoder_methods {
         })*
     }
 }
-impl<'tcx> Encoder for MetadataEncoder<'tcx> {
+impl<'tcx> Encoder for DefSpecsEncoder<'tcx> {
     type Error = <opaque::Encoder as Encoder>::Error;
 
     #[inline]
@@ -73,25 +73,25 @@ impl<'tcx> Encoder for MetadataEncoder<'tcx> {
     }
 }
 
-impl<'a, 'tcx> Encodable<MetadataEncoder<'tcx>> for DefId {
-    fn encode(&self, s: &mut MetadataEncoder<'tcx>) -> opaque::EncodeResult {
+impl<'a, 'tcx> Encodable<DefSpecsEncoder<'tcx>> for DefId {
+    fn encode(&self, s: &mut DefSpecsEncoder<'tcx>) -> opaque::EncodeResult {
         s.tcx.def_path_hash(*self).encode(s)
     }
 }
 
-impl<'a, 'tcx> Encodable<MetadataEncoder<'tcx>> for DefIndex {
-    fn encode(&self, _: &mut MetadataEncoder<'tcx>) -> opaque::EncodeResult {
+impl<'a, 'tcx> Encodable<DefSpecsEncoder<'tcx>> for DefIndex {
+    fn encode(&self, _: &mut DefSpecsEncoder<'tcx>) -> opaque::EncodeResult {
         panic!("encoding `DefIndex` without context");
     }
 }
 
-impl<'tcx> Encodable<MetadataEncoder<'tcx>> for CrateNum {
-    fn encode(&self, s: &mut MetadataEncoder<'tcx>) -> opaque::EncodeResult {
+impl<'tcx> Encodable<DefSpecsEncoder<'tcx>> for CrateNum {
+    fn encode(&self, s: &mut DefSpecsEncoder<'tcx>) -> opaque::EncodeResult {
         s.tcx.stable_crate_id(*self).encode(s)
     }
 }
 
-impl<'tcx> TyEncoder<'tcx> for MetadataEncoder<'tcx> {
+impl<'tcx> TyEncoder<'tcx> for DefSpecsEncoder<'tcx> {
     // What the fuck does this mean?
     const CLEAR_CROSS_CRATE: bool = true;
 

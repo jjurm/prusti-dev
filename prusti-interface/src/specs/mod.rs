@@ -19,7 +19,7 @@ use std::{collections::HashMap, convert::TryInto, fmt::Debug};
 pub mod checker;
 pub mod external;
 pub mod typed;
-pub mod metadata;
+pub mod lite;
 
 use typed::SpecIdRef;
 
@@ -31,7 +31,7 @@ use prusti_specs::specifications::common::SpecificationId;
 
 use std::fs;
 use std::path::Path;
-use crate::specs::metadata::{dump_binary_metadata, metadata_from_def_spec};
+use crate::specs::lite::{DefSpecificationMapLite, dump_def_specs_lite};
 
 #[derive(Debug)]
 struct ProcedureSpecRefs {
@@ -99,8 +99,8 @@ impl<'a, 'tcx> SpecCollector<'a, 'tcx> {
     }
 
     fn write_specs_to_file(&self, def_spec: & typed::DefSpecificationMap) {
-        let metadata = metadata_from_def_spec(def_spec);
-        dump_binary_metadata(
+        let metadata = DefSpecificationMapLite::from_def_spec(def_spec);
+        dump_def_specs_lite(
             self.tcx,
             Path::new("out.txt"),
             metadata

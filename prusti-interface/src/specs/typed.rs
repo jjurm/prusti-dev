@@ -102,7 +102,7 @@ pub struct LoopSpecification {
 }
 
 /// Specification of a type.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, TyEncodable)]
 pub struct TypeSpecification {
     pub invariant: SpecificationItem<Vec<DefId>>,
     pub trusted: SpecificationItem<bool>,
@@ -117,12 +117,12 @@ impl TypeSpecification {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, TyEncodable)]
 pub struct PrustiAssertion {
     pub assertion: LocalDefId,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, TyEncodable)]
 pub struct PrustiAssumption {
     pub assumption: LocalDefId,
 }
