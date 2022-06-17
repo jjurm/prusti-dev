@@ -53,7 +53,7 @@ impl<'qry, 'tcx> RefinementContext<'qry, 'tcx> {
 
 /// Provides access to specifications, handling refinement if needed
 pub(super) struct Specifications<'tcx> {
-    user_typed_specs: DefSpecificationMap,
+    user_typed_specs: DefSpecificationMap<'tcx>,
 
     /// A refinement can be different based on the query.
     /// The query can resolve to different [ProcedureSpecification]s due to ghost constraints.
@@ -63,7 +63,7 @@ pub(super) struct Specifications<'tcx> {
 }
 
 impl<'tcx> Specifications<'tcx> {
-    pub(super) fn new(user_typed_specs: DefSpecificationMap) -> Self {
+    pub(super) fn new(user_typed_specs: DefSpecificationMap<'tcx>) -> Self {
         Self {
             user_typed_specs,
             refined_specs: FxHashMap::default(),

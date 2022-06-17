@@ -17,7 +17,7 @@ pub(crate) struct SpecificationsState<'tcx> {
 }
 
 impl<'tcx> SpecificationsState<'tcx> {
-    pub fn new(user_typed_specs: DefSpecificationMap) -> Self {
+    pub fn new(user_typed_specs: DefSpecificationMap<'tcx>) -> Self {
         Self {
             specs: RefCell::new(Specifications::new(user_typed_specs)),
         }

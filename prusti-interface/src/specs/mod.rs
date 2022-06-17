@@ -93,6 +93,8 @@ impl<'a, 'tcx> SpecCollector<'a, 'tcx> {
         self.determine_prusti_assumptions(&mut def_spec);
         // TODO: remove spec functions (make sure none are duplicated or left over)
 
+        self.fetch_local_mirs(&mut def_spec);
+
         self.write_specs_to_file(&def_spec);
 
         def_spec
@@ -251,6 +253,16 @@ impl<'a, 'tcx> SpecCollector<'a, 'tcx> {
                     assumption: *local_id,
                 },
             );
+        }
+    }
+
+    fn fetch_local_mirs(&self, def_spec: &mut typed::DefSpecificationMap) {
+        for def_id in def_spec.proc_specs.values()
+            // TODO: extend also to specs_with_constraints instead of base_spec only
+            .map(|spec_graph| spec_graph.base_spec)
+            .flat_map(|proc_spec| proc_spec.pres.chain(proc_spec.posts)) {
+            let mir = self.env.local_mir(def_id.expect_local(), substs);
+            def_spec.local_mirs.insert(def_id, mir)
         }
     }
 }

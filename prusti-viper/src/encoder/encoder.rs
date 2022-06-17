@@ -108,7 +108,7 @@ pub fn encode_field_name(field_name: &str) -> String {
 impl<'v, 'tcx> Encoder<'v, 'tcx> {
     pub fn new(
         env: &'v Environment<'tcx>,
-        def_spec: typed::DefSpecificationMap,
+        def_spec: typed::DefSpecificationMap<'tcx>,
     ) -> Self {
         let source_path = env.source_path();
         let source_filename = source_path.file_name().unwrap().to_str().unwrap();

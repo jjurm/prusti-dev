@@ -4,6 +4,7 @@ use log::trace;
 use prusti_specs::specifications::common;
 use rustc_hash::FxHashMap;
 use rustc_hir::def_id::{DefId, LocalDefId};
+use rustc_middle::mir;
 use rustc_span::Span;
 use std::{
     collections::HashMap,
@@ -13,15 +14,17 @@ use rustc_macros::TyEncodable;
 
 /// A map of specifications keyed by crate-local DefIds.
 #[derive(Default, Debug, Clone)]
-pub struct DefSpecificationMap {
+pub struct DefSpecificationMap<'specs> {
     pub proc_specs: HashMap<DefId, SpecGraph<ProcedureSpecification>>,
     pub loop_specs: HashMap<DefId, LoopSpecification>,
     pub type_specs: HashMap<DefId, TypeSpecification>,
     pub prusti_assertions: HashMap<DefId, PrustiAssertion>,
     pub prusti_assumptions: HashMap<DefId, PrustiAssumption>,
+
+    pub local_mirs: HashMap<DefId, mir::Body<'specs>>,
 }
 
-impl DefSpecificationMap {
+impl<'specs> DefSpecificationMap<'specs> {
     pub fn new() -> Self {
         Self::default()
     }
