@@ -229,7 +229,8 @@ pub mod trait_bounds {
             .cloned()
             .unwrap_or_default();
         for spec_id in pres.iter().chain(posts.iter())
-            .filter_map(|spec_id| spec_id.as_local()) {
+            // Parameter substitution is not yet implemented for external specification
+            .map(|spec_id| spec_id.expect_local()) {
             let param_env = env.tcx().param_env(spec_id.to_def_id());
             let spec_span = env.tcx().def_span(spec_id.to_def_id());
             let attrs = env.get_local_attributes(spec_id);

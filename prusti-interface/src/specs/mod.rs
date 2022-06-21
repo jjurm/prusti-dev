@@ -1,6 +1,7 @@
 use rustc_ast::ast;
 use rustc_errors::MultiSpan;
 use rustc_hir::intravisit;
+use rustc_middle::mir;
 use rustc_middle::{hir::map::Map, ty::TyCtxt};
 use rustc_span::Span;
 
@@ -256,13 +257,20 @@ impl<'a, 'tcx> SpecCollector<'a, 'tcx> {
         }
     }
 
-    fn fetch_local_mirs(&self, def_spec: &mut typed::DefSpecificationMap) {
-        for def_id in def_spec.proc_specs.values()
+    fn fetch_local_mirs<'specs>(&self, def_spec: &mut typed::DefSpecificationMap<'specs>) where 'tcx: 'specs {
+        for def_id in def_spec.proc_specs
+            // collect [DefId]s in specs of all procedures
+            .values()
             // TODO: extend also to specs_with_constraints instead of base_spec only
-            .map(|spec_graph| spec_graph.base_spec)
-            .flat_map(|proc_spec| proc_spec.pres.chain(proc_spec.posts)) {
-            let mir = self.env.local_mir(def_id.expect_local(), substs);
-            def_spec.local_mirs.insert(def_id, mir)
+            .map(|spec_graph| &spec_graph.base_spec)
+            .flat_map(|proc_spec| {
+                vec![&proc_spec.pres, &proc_spec.posts].into_iter().filter_map(|spec_item| {
+                    spec_item.extract_with_selective_replacement()
+                })
+                    .flatten()
+            }) {
+            let base_mir: mir::Body<'tcx> = self.env.local_base_mir(def_id.expect_local());
+            def_spec.local_mirs.insert(*def_id, base_mir);
         }
     }
 }

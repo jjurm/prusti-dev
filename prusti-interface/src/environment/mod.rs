@@ -47,6 +47,7 @@ pub use self::procedure::{BasicBlockIndex, Procedure, is_marked_specification_bl
 use self::borrowck::facts::BorrowckFacts;
 use crate::data::ProcedureDefId;
 use rustc_span::source_map::SourceMap;
+use rustc_borrowck::BodyWithBorrowckFacts;
 
 struct CachedBody<'tcx> {
     /// MIR body as known to the compiler.
@@ -278,6 +279,20 @@ impl<'tcx> Environment<'tcx> {
         Procedure::new(self, proc_def_id)
     }
 
+    fn local_raw_mir(&self, def_id: LocalDefId) -> BodyWithBorrowckFacts<'tcx> {
+        // SAFETY: This is safe because we are feeding in the same `tcx`
+        // that was used to store the data.
+        return unsafe {
+            self::mir_storage::retrieve_mir_body(self.tcx, def_id)
+        };
+    }
+
+    /// Get the MIR body of a local procedure, without performing any type substitution
+    pub fn local_base_mir(&self, def_id: LocalDefId) -> mir::Body<'tcx> {
+        let body_with_facts = self.local_raw_mir(def_id);
+        return body_with_facts.body;
+    }
+
     /// Get the MIR body of a local procedure, monomorphised with the given
     /// type substitutions.
     pub fn local_mir(
@@ -288,11 +303,7 @@ impl<'tcx> Environment<'tcx> {
         let mut bodies = self.bodies.borrow_mut();
         let body = bodies.entry(def_id)
             .or_insert_with(|| {
-                // SAFETY: This is safe because we are feeding in the same `tcx`
-                // that was used to store the data.
-                let body_with_facts = unsafe {
-                    self::mir_storage::retrieve_mir_body(self.tcx, def_id)
-                };
+                let body_with_facts = self.local_raw_mir(def_id);
                 let body = body_with_facts.body;
                 let facts = BorrowckFacts {
                     input_facts: RefCell::new(Some(body_with_facts.input_facts)),
