@@ -6,7 +6,7 @@ use prusti_interface::{
     PrustiError,
 };
 use rustc_errors::MultiSpan;
-use rustc_hir::def_id::{DefId, LocalDefId};
+use rustc_hir::def_id::DefId;
 use rustc_middle::{
     ty,
     ty::subst::{Subst, SubstsRef},

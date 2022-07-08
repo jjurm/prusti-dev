@@ -10,7 +10,6 @@ members = [
     "prusti-common",
     "prusti-interface",
     "prusti-viper",
-    "prusti-serialize",
     "prusti-server",
     "prusti-launch",
     "prusti-utils",

@@ -1,14 +1,11 @@
-extern crate rustc_serialize;
-
-use rustc_middle::mir::interpret::AllocId;
-use rustc_middle::ty::codec::TyEncoder;
-use rustc_middle::ty::{self, PredicateKind, Ty};
-use rustc_serialize::opaque;
-pub use rustc_serialize::{Encodable, Encoder};
-
 use rustc_data_structures::fx::{FxHashMap, FxIndexSet};
 use rustc_hir::def_id::{CrateNum, DefId, DefIndex};
+use rustc_middle::mir::interpret::AllocId;
+use rustc_middle::ty::{self, PredicateKind, Ty};
+use rustc_middle::ty::codec::TyEncoder;
 use rustc_middle::ty::TyCtxt;
+use rustc_serialize::{Encodable, Encoder};
+use rustc_serialize::opaque;
 
 pub struct DefSpecsEncoder<'tcx> {
     tcx: TyCtxt<'tcx>,

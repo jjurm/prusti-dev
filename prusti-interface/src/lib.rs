@@ -13,6 +13,7 @@
 #![feature(box_syntax)]
 #![feature(box_patterns)]
 #![feature(control_flow_enum)]
+#![feature(min_specialization)]
 
 // #![feature(nll)]
 
@@ -39,6 +40,7 @@ extern crate tracing;
 extern crate lazy_static;
 
 extern crate rustc_serialize;
+extern crate rustc_session;
 extern crate rustc_macros;
 
 pub mod data;

@@ -7,10 +7,11 @@ use prusti_interface::{
     },
     utils::has_spec_only_attr,
 };
-use rustc_hir::def_id::{DefId, LocalDefId};
-use rustc_middle::ty::subst::SubstsRef;
+use rustc_hir::def_id::DefId;
+use rustc_middle::{mir, ty::subst::SubstsRef};
 use rustc_span::Span;
 use std::{cell::RefCell, hash::Hash};
+use std::rc::Rc;
 
 pub(crate) struct SpecificationsState<'tcx> {
     specs: RefCell<Specifications<'tcx>>,
@@ -119,6 +120,8 @@ pub(crate) trait SpecificationsInterface<'tcx> {
     /// Get the span of the declared specification, if any, or else the span of
     /// the method declaration.
     fn get_spec_span(&self, def_id: DefId) -> Span;
+
+    fn get_local_mir(&self, def_id: DefId) -> Rc<mir::Body<'tcx>>;
 }
 
 impl<'v, 'tcx: 'v> SpecificationsInterface<'tcx> for super::super::super::Encoder<'v, 'tcx> {
@@ -253,5 +256,9 @@ impl<'v, 'tcx: 'v> SpecificationsInterface<'tcx> for super::super::super::Encode
             .get_and_refine_proc_spec(self.env(), query)
             .and_then(|spec| spec.span)
             .unwrap_or_else(|| self.env().get_def_span(def_id))
+    }
+
+    fn get_local_mir(&self, def_id: DefId) -> Rc<mir::Body<'tcx>> {
+        return self.specifications_state.specs.borrow().get_local_mirs().get(&def_id).unwrap().clone();
     }
 }

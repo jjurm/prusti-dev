@@ -24,7 +24,6 @@ config = "0.13"
 rustc-hash = "1.1.0"
 datafrog = "2.0.1"
 vir = { path = "../vir" }
-prusti-serialize = { path = "../prusti-serialize" }
 
 [package.metadata.rust-analyzer]
 # This crate uses #[feature(rustc_private)]

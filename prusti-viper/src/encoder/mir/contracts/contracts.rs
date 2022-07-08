@@ -3,7 +3,7 @@ use crate::encoder::places;
 use prusti_interface::{environment::Environment, specs::typed};
 use rustc_hash::FxHashMap;
 use rustc_hir::{
-    def_id::{DefId, LocalDefId},
+    def_id::DefId,
     Mutability,
 };
 use rustc_middle::{mir, ty::subst::SubstsRef};

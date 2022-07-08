@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+use std::rc::Rc;
 use crate::encoder::{
     errors::MultiSpan,
     mir::specifications::{
@@ -17,6 +19,7 @@ use prusti_interface::{
 };
 use rustc_hash::FxHashMap;
 use rustc_hir::def_id::DefId;
+use rustc_middle::mir;
 
 /// Defines the context for which we perform refinement.
 /// It can be thought of as the variants of [SpecQuery] for which we can perform refinement.
@@ -117,6 +120,10 @@ impl<'tcx> Specifications<'tcx> {
             }
             _ => self.get_proc_spec(env, &query),
         }
+    }
+
+    pub(super) fn get_local_mirs(&self) -> &HashMap<DefId, Rc<mir::Body<'tcx>>> {
+        return &self.user_typed_specs.local_mirs;
     }
 
     fn perform_proc_spec_refinement<'a, 'env: 'a>(

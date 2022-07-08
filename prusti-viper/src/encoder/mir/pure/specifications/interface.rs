@@ -23,7 +23,7 @@ use crate::encoder::{
     mir_interpreter::run_backward_interpretation_point_to_point,
     snapshot::interface::SnapshotEncoderInterface,
 };
-use rustc_hir::def_id::{DefId, LocalDefId};
+use rustc_hir::def_id::DefId;
 use rustc_middle::{mir, ty::subst::SubstsRef};
 use rustc_span::Span;
 use vir_crate::{

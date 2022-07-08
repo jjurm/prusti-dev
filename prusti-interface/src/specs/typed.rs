@@ -10,18 +10,19 @@ use std::{
     collections::HashMap,
     fmt::{Debug, Display, Formatter},
 };
-use rustc_macros::TyEncodable;
+use std::rc::Rc;
+use rustc_macros::{TyEncodable, TyDecodable};
 
 /// A map of specifications keyed by crate-local DefIds.
 #[derive(Default, Debug, Clone)]
-pub struct DefSpecificationMap<'specs> {
+pub struct DefSpecificationMap<'tcx> {
     pub proc_specs: HashMap<DefId, SpecGraph<ProcedureSpecification>>,
     pub loop_specs: HashMap<DefId, LoopSpecification>,
     pub type_specs: HashMap<DefId, TypeSpecification>,
     pub prusti_assertions: HashMap<DefId, PrustiAssertion>,
     pub prusti_assumptions: HashMap<DefId, PrustiAssumption>,
 
-    pub local_mirs: HashMap<DefId, mir::Body<'specs>>,
+    pub local_mirs: HashMap<DefId, Rc<mir::Body<'tcx>>>,
 }
 
 impl<'specs> DefSpecificationMap<'specs> {
@@ -50,7 +51,7 @@ impl<'specs> DefSpecificationMap<'specs> {
     }
 }
 
-#[derive(Debug, Clone, TyEncodable)]
+#[derive(Debug, Clone, TyEncodable, TyDecodable)]
 pub struct ProcedureSpecification {
     pub span: Option<Span>,
     pub kind: SpecificationItem<ProcedureSpecificationKind>,
@@ -75,7 +76,7 @@ impl ProcedureSpecification {
     }
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, TyEncodable)]
+#[derive(Clone, Copy, Debug, PartialEq, TyEncodable, TyDecodable)]
 pub enum ProcedureSpecificationKind {
     Impure,
     Pure,
@@ -84,7 +85,7 @@ pub enum ProcedureSpecificationKind {
     Predicate(Option<DefId>),
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash, TyEncodable)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash, TyEncodable, TyDecodable)]
 pub enum SpecConstraintKind {
     ResolveGenericParamTraitBounds,
 }
@@ -105,7 +106,7 @@ pub struct LoopSpecification {
 }
 
 /// Specification of a type.
-#[derive(Debug, Clone, TyEncodable)]
+#[derive(Debug, Clone, TyEncodable, TyDecodable)]
 pub struct TypeSpecification {
     pub invariant: SpecificationItem<Vec<DefId>>,
     pub trusted: SpecificationItem<bool>,
@@ -120,12 +121,12 @@ impl TypeSpecification {
     }
 }
 
-#[derive(Debug, Clone, TyEncodable)]
+#[derive(Debug, Clone, TyEncodable, TyDecodable)]
 pub struct PrustiAssertion {
     pub assertion: LocalDefId,
 }
 
-#[derive(Debug, Clone, TyEncodable)]
+#[derive(Debug, Clone, TyEncodable, TyDecodable)]
 pub struct PrustiAssumption {
     pub assumption: LocalDefId,
 }
@@ -134,7 +135,7 @@ pub struct PrustiAssumption {
 /// A contract can be divided into multiple specifications:
 /// - **Base spec**: A spec without constraints.
 /// - **Constrained specs**: Multiple specs which have [SpecConstraintKind] constraints.
-#[derive(Default, Debug, Clone, TyEncodable)]
+#[derive(Default, Debug, Clone, TyEncodable, TyDecodable)]
 pub struct SpecGraph<T> {
     /// The base specification which has no constraints
     pub base_spec: T,
@@ -321,7 +322,7 @@ impl SpecGraph<ProcedureSpecification> {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, TyEncodable)]
+#[derive(Debug, Clone, PartialEq, TyEncodable, TyDecodable)]
 pub struct Pledge {
     pub reference: Option<()>, // TODO: pledge references
     pub lhs: Option<LocalDefId>,
@@ -330,7 +331,7 @@ pub struct Pledge {
 
 /// A specification, such as preconditions or a `#[pure]` annotation.
 /// Contains information about the refinement of these specifications.
-#[derive(Debug, Clone, Copy, PartialEq, TyEncodable)]
+#[derive(Debug, Clone, Copy, PartialEq, TyEncodable, TyDecodable)]
 pub enum SpecificationItem<T> {
     /// Represents an empty specification, i.e. when the user has not defined the property
     Empty,

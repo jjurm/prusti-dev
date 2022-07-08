@@ -1785,7 +1785,6 @@ dependencies = [
  "lazy_static",
  "log",
  "prusti-common",
- "prusti-serialize",
  "prusti-specs",
  "prusti-utils",
  "regex",
@@ -1804,14 +1803,6 @@ dependencies = [
  "serde",
  "toml",
  "walkdir",
-]
-
-[[package]]
-name = "prusti-serialize"
-version = "0.1.0"
-dependencies = [
- "log",
- "vir",
 ]
 
 [[package]]
